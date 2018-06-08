@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 public class BabyNamer {
 	
-    public static ArrayList<String> getData (String filename, int markovOrder) throws IOException{				// Reads the data file line by line. Creates a list of formatted data
+    public static ArrayList<String> getData (String filename, int markovOrder) throws IOException{			// Reads the data file line by line. Creates a list of formatted data
     	ArrayList<String> dataSet = new ArrayList<String>();
     	BufferedReader reader;		
 		reader = new BufferedReader(new FileReader(filename));
@@ -27,7 +27,7 @@ public class BabyNamer {
     
     
     
-    public static String formatIt (String line, int markovOrder){												// Formats each name so that the proper number of _ and # characters surround it
+    public static String formatIt (String line, int markovOrder){							// Formats each name so that the proper number of _ and # characters surround it
     	String startFormat = "";
     	String endFormat = "";
     	for (int i = 0; i < markovOrder; i++){
@@ -41,7 +41,7 @@ public class BabyNamer {
     
     
     
-    public static String unFormatIt (String name, int markovOrder){												// Removes beginning and ending tags from names
+    public static String unFormatIt (String name, int markovOrder){							// Removes beginning and ending tags from names
     	String output = name.substring(markovOrder, name.length() - markovOrder + 1);
     	return output;
     }
@@ -53,22 +53,22 @@ public class BabyNamer {
     	String endChar = "#";
     	String next = "";
     	
-    	for (int i = 0; i < dataSet.size(); i++){																// Iterate through each name in the dataSet
-    		String name = dataSet.get(i);																		// Get the name
-    		for (int j = 0; j < name.length() - markovOrder; j++){												// Look at each character in the name one at a time
-    			if (Character.toString(name.charAt(j)) == endChar){												// If we see the end character then stop looking at this name
+    	for (int i = 0; i < dataSet.size(); i++){									// Iterate through each name in the dataSet
+    		String name = dataSet.get(i);										// Get the name
+    		for (int j = 0; j < name.length() - markovOrder; j++){							// Look at each character in the name one at a time
+    			if (Character.toString(name.charAt(j)) == endChar){						// If we see the end character then stop looking at this name
     				break;									
-    			} else {																						// Else collect characters between our current index and the markovOrder limit   					
+    			} else {											// Else collect characters between our current index and the markovOrder limit   					
     				String subStr = name.substring(j, j + markovOrder);
-    				if (patterns.containsKey(subStr)){															// If we have seen this subStr before then add our current next character to its nextLetter ArrayList		
+    				if (patterns.containsKey(subStr)){							// If we have seen this subStr before then add our current next character to its nextLetter ArrayList		
     					next = Character.toString(name.charAt(j + markovOrder));
-    					patterns.get(subStr).nextLetter.add(next);												// Adds the next letter after our substring to the ArrayList of next letters
-    				} else {																					// Else add this new subStr to the patterns hash map
+    					patterns.get(subStr).nextLetter.add(next);					// Adds the next letter after our substring to the ArrayList of next letters
+    				} else {										// Else add this new subStr to the patterns hash map
     					LetterProb current = new LetterProb(subStr);
     					ArrayList <String> nextLetter = new ArrayList<String>();
     					nextLetter.add(Character.toString(name.charAt(j + markovOrder)));
     					current.nextLetter = nextLetter;
-    					patterns.put(subStr, current);															// Adds the next letter after our substring to the ArrayList of next letters
+    					patterns.put(subStr, current);							// Adds the next letter after our substring to the ArrayList of next letters
     				}
     			}
     		}
@@ -78,7 +78,7 @@ public class BabyNamer {
     
     
     
-    public static String genStart (int markovOrder){															// Creates our starting string for each name
+    public static String genStart (int markovOrder){									// Creates our starting string for each name
     	String output = "";
     	for (int i = 0; i < markovOrder; i++){
     		output = output + "_";
@@ -127,19 +127,19 @@ public class BabyNamer {
 		String currName = genStart(markovOrder);
 		
 		while (legalNames < num){
-			int i = markovOrder - 1;																				// Reset to "__" starting condition
-			String subStr = "__";																					//
-			currName = genStart(markovOrder);																		//
+			int i = markovOrder - 1;									// Reset to "__" starting condition
+			String subStr = "__";										
+			currName = genStart(markovOrder);								
 			
-			while ((Character.toString(currName.charAt(i)).compareTo(endSymbol) != 0)){								// Continue building a name until we encounter the endSymbol		
+			while ((Character.toString(currName.charAt(i)).compareTo(endSymbol) != 0)){			// Continue building a name until we encounter the endSymbol		
 				LetterProb currProb = patterns.get(subStr);
-				String nextL = currProb.predictedLetter(currProb.nextLetter);										// Pick the next letter based on the subStr's pattern
-				currName = currName + nextL;																		// Append the next letter to our new name
-				subStr = currName.substring(i, i + 2);																// Isolate the next substring
+				String nextL = currProb.predictedLetter(currProb.nextLetter);				// Pick the next letter based on the subStr's pattern
+				currName = currName + nextL;								// Append the next letter to our new name
+				subStr = currName.substring(i, i + 2);							// Isolate the next substring
 				i++;
 			}
-			if (!(currName.length() < minLen || currName.length() > maxLen || dataSet.contains(currName))){			// Keeps any legal names generated
-				currName = unFormatIt(currName, markovOrder);														// Remove beginning and ending markers
+			if (!(currName.length() < minLen || currName.length() > maxLen || dataSet.contains(currName))){	// Keeps any legal names generated
+				currName = unFormatIt(currName, markovOrder);						// Remove beginning and ending markers
 				goodNames[legalNames] = currName;
 				legalNames++;
 			}
